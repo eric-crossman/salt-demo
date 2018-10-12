@@ -49,3 +49,44 @@ Master: Set the master to automatically start upon boot.
 
 Start the service
 ```systemctl start salt-master.service```
+
+Minion: Set the minion process to automatically start upon boot.
+
+```systemctl enable salt-minion.service```
+
+Start the service
+
+```systemctl start salt-minion.service```
+
+### Host Name Resolution
+
+Since the hosts running on Azure currently do not have DNS resolution, we will
+configure a local hosts file to use familiar names
+
+Add the following to /etc/hosts:
+```10.0.1.4        salt salt.local```
+
+### Key management
+Salt minion host keys must be accepted/authorized on the master before they will
+be trusted.
+
+* List keys
+
+```salt-key -L```
+
+```
+[root@SaltMaster ecrossman]# salt-key
+Accepted Keys:
+Denied Keys:
+Unaccepted Keys:
+MediaWiki
+Rejected Keys:
+```
+
+* Accept key
+
+``` salt-key -a MediaWiki```
+
+### Test Minion Communication
+Send test 'ping' to all connected minions
+```salt '*' test.ping```
