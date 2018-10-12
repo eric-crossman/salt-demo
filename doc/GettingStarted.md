@@ -37,6 +37,10 @@ Install packages needed for a Salt Master role.
 
 ```yum -y install salt-cloud```
 
+Install packages needed for a Salt Minion role.
+
+```yum -y install salt-minion```
+
 Post installation
 
 Master: Set the master to automatically start upon boot.
