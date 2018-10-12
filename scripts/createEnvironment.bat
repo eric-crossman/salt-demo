@@ -23,8 +23,4 @@ REM Step 3 - Create a network security group to limit protocol access
 call az network nsg create --name %AZURE_NSG_NAME% --resource-group %AZURE_RESOURCE_GROUP_NAME% --location %AZURE_REGION%
 
 REM Step 4 - Create VM for Salt Master
-call az vm create -n SaltMaster -g %AZURE_RESOURCE_GROUP_NAME% --image centos \
-  --vnet-name %AZURE_VNET_NAME% --subnet %AZURE_VNET_SUBNET_NAME% \
-  --nsg %AZURE_NSG_NAME% \
-  --public-ip-address SaltMasterPublicIp \
-  --ssh-key-value %AZURE_SSH_KEY_FILE%
+call az vm create -n SaltMaster -g %AZURE_RESOURCE_GROUP_NAME% --image centos --vnet-name %AZURE_VNET_NAME% --subnet %AZURE_VNET_SUBNET_NAME% --nsg %AZURE_NSG_NAME% --public-ip-address SaltMasterPublicIp --ssh-key-value %AZURE_SSH_KEY_FILE%
