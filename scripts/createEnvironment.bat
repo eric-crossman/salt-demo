@@ -4,6 +4,7 @@ REM
 REM     AZURE_REGION
 REM     AZURE_RESOURCE_GROUP_NAME
 REM     AZURE_COMMON_TAGS
+REM     AZURE_NSG_NAME
 REM     AZURE_VNET_NAME
 REM     AZURE_VNET_PREFIX
 REM     AZURE_VNET_SUBNET_NAME
@@ -17,3 +18,13 @@ call az group create --location %AZURE_REGION% --name %AZURE_RESOURCE_GROUP_NAME
 
 REM Step 2 - Create a virtual network with a specific subnet range
 call az network vnet create -g %AZURE_RESOURCE_GROUP_NAME% -n %AZURE_VNET_NAME% --address-prefix %AZURE_VNET_PREFIX% --subnet-name %AZURE_VNET_SUBNET_NAME% --subnet-prefix %AZURE_VNET_SUBNET_PREFIX%
+
+REM Step 3 - Create a network security group to limit protocol access
+call az network nsg create --name %AZURE_NSG_NAME% --resource-group %AZURE_RESOURCE_GROUP_NAME% --location %AZURE_REGION%
+
+REM Step 4 - Create VM for Salt Master
+call az vm create -n SaltMaster -g %AZURE_RESOURCE_GROUP_NAME% --image centos \
+  --vnet-name %AZURE_VNET_NAME% --subnet %AZURE_VNET_SUBNET_NAME% \
+  --nsg %AZURE_NSG_NAME% \
+  --public-ip-address SaltMasterPublicIp \
+  --ssh-key-value %AZURE_SSH_KEY_FILE%
