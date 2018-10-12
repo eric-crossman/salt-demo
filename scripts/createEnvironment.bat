@@ -5,6 +5,7 @@ REM     AZURE_REGION
 REM     AZURE_RESOURCE_GROUP_NAME
 REM     AZURE_COMMON_TAGS
 REM     AZURE_NSG_NAME
+REM     AZURE_NSG_SOURCE_PREFIX
 REM     AZURE_VNET_NAME
 REM     AZURE_VNET_PREFIX
 REM     AZURE_VNET_SUBNET_NAME
@@ -22,5 +23,11 @@ call az network vnet create -g %AZURE_RESOURCE_GROUP_NAME% -n %AZURE_VNET_NAME% 
 REM Step 3 - Create a network security group to limit protocol access
 call az network nsg create --name %AZURE_NSG_NAME% --resource-group %AZURE_RESOURCE_GROUP_NAME% --location %AZURE_REGION%
 
+REM Step 4 - Add NSG rule for incoming SSH access
+call az network nsg rule create -g %AZURE_RESOURCE_GROUP_NAME% --nsg-name %AZURE_NSG_NAME% -n AllowSsh --priority 101 --source-address-prefixes %AZURE_NSG_SOURCE_PREFIX% --destination-port-ranges 22 --access Allow --protocol tcp --description "Allow SSH from UF network."
+
 REM Step 4 - Create VM for Salt Master
 call az vm create -n SaltMaster -g %AZURE_RESOURCE_GROUP_NAME% --image centos --vnet-name %AZURE_VNET_NAME% --subnet %AZURE_VNET_SUBNET_NAME% --nsg %AZURE_NSG_NAME% --public-ip-address SaltMasterPublicIp --ssh-key-value %AZURE_SSH_KEY_FILE%
+
+REM Step 5 - Create VM for Minion/MediaWiki
+call az vm create -n MediaWiki -g %AZURE_RESOURCE_GROUP_NAME% --image centos --vnet-name %AZURE_VNET_NAME% --subnet %AZURE_VNET_SUBNET_NAME% --nsg %AZURE_NSG_NAME% --public-ip-address MediaWikiPublicIp --ssh-key-value %AZURE_SSH_KEY_FILE%
